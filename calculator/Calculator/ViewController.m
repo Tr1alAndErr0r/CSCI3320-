@@ -11,13 +11,17 @@
 
 @interface ViewController()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
+@property (nonatomic) BOOL notLegalFloatingPointNumber;
+@property (nonatomic) BOOL secondDisplayCheck;
 @property (nonatomic,strong) CalculatorBrain *brain;
 @end
 
 @implementation ViewController
-
 @synthesize display;
+@synthesize displayTwo;
 @synthesize userIsInTheMiddleOfEnteringANumber;
+@synthesize notLegalFloatingPointNumber;
+@synthesize secondDisplayCheck;
 @synthesize brain = _brain;
 
 -(CalculatorBrain *)brain
@@ -26,34 +30,108 @@
     return _brain;
 }
 
+- (IBAction)clearPressed:(UIButton *)sender
+{
+    self.display.text = @"0";
+    self.displayTwo.text = @"0";
+    self.userIsInTheMiddleOfEnteringANumber = NO;
+    self.notLegalFloatingPointNumber = NO;
+    self.secondDisplayCheck = NO;
+    [self.brain clearArray];
+    
+}
+
+- (IBAction)backSpacePressed:(UIButton *)sender
+{
+    NSString *stringDisplayOne = self.display.text;
+
+    if([stringDisplayOne length] == 1)
+    {
+        self.display.text = @"0";
+        self.userIsInTheMiddleOfEnteringANumber = NO;
+    }
+    
+    else if([stringDisplayOne length] > 0)
+    {
+        self.display.text = [stringDisplayOne substringToIndex:[stringDisplayOne length] - 1];
+    }
+    
+    else
+    {
+
+    }
+    
+}
+
 - (IBAction)digitPressed:(UIButton *)sender
 {
     NSString *digit = [sender currentTitle];
+
     if (self.userIsInTheMiddleOfEnteringANumber)
     {
         self.display.text = [self.display.text stringByAppendingString:digit];
+        self.displayTwo.text = [self.displayTwo.text stringByAppendingString:digit];
     }
+    
     else
     {
+        if(self.secondDisplayCheck)
+        {
         self.display.text = digit;
+        self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
+        self.displayTwo.text = [self.displayTwo.text stringByAppendingString:digit];
         self.userIsInTheMiddleOfEnteringANumber = YES;
+        }
+        
+        else
+        {
+            self.display.text = digit;
+            self.displayTwo.text = digit;
+            self.userIsInTheMiddleOfEnteringANumber = YES;
+            self.secondDisplayCheck = YES;
+        }
     }
 }
 
+- (IBAction)dotPressed:(UIButton *)sender
+{
+    NSString *dot = [sender currentTitle];
+   
+    if (self.notLegalFloatingPointNumber == NO)
+    {
+        if (self.userIsInTheMiddleOfEnteringANumber)
+        {
+            self.display.text = [self.display.text stringByAppendingString:dot];
+            self.displayTwo.text = [self.displayTwo.text stringByAppendingString:dot];
+            self.notLegalFloatingPointNumber = YES;
+        }
+        
+        else
+        {
+            self.display.text = dot;
+            self.displayTwo.text = dot;
+            self.userIsInTheMiddleOfEnteringANumber = YES;
+            self.notLegalFloatingPointNumber = YES;
+        }
+    }
+}
 
 - (IBAction)enterPressed
 {
     [self.brain pushOperand:[self.display.text doubleValue]];
     self.userIsInTheMiddleOfEnteringANumber = NO;
+    self.notLegalFloatingPointNumber = NO;
 }
 
 
 - (IBAction)operationPressed:(id)sender
 {
-    if (self.userIsInTheMiddleOfEnteringANumber) {
+    if (self.userIsInTheMiddleOfEnteringANumber)
+    {
         [self enterPressed];
     }
     NSString *operation = [sender currentTitle];
+    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation];
     double result = [self.brain performOperations:operation];
     self.display.text = [NSString stringWithFormat:@"%g", result];
 

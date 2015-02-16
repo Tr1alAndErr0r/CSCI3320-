@@ -12,5 +12,6 @@
 
 -(void)pushOperand:(double)operand;
 -(double)performOperations:(NSString *)operation;
+-(void)clearArray;
 
 @end

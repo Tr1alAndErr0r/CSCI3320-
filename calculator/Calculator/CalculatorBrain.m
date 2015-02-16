@@ -40,6 +40,11 @@
     return [operandObject doubleValue];
 }
 
+-(void)clearArray
+{
+    [self.operandStack removeAllObjects];
+}
+
 -(double)performOperations:(NSString *)operation
 {
     double result = 0;
@@ -48,19 +53,42 @@
     {
         result = [self popOperand] + [self popOperand];
     }
+    
     else if([@"*" isEqualToString:operation])
     {
         result = [self popOperand] * [self popOperand];
     }
+    
     else if([operation isEqualToString:@"-"])
     {
         double subtrahend = [self popOperand];
         result = [self popOperand] - subtrahend;
     }
+    
     else if ([operation isEqualToString:@"/"])
     {
         double divisor = [self popOperand];
         if (divisor) result = [self popOperand] / divisor;
+    }
+    
+    else if ([operation isEqualToString:@"sin"])
+    {
+        result = sin([self popOperand]);
+    }
+    
+    else if ([operation isEqualToString:@"cos"])
+    {
+        result = cos([self popOperand]);
+    }
+    
+    else if ([operation isEqualToString:@"sqrt"])
+    {
+        result = sqrt([self popOperand]);
+    }
+
+    else if ([operation isEqualToString:@"pi"])
+    {
+        result = M_PI;
     }
     
     [self pushOperand:result];
