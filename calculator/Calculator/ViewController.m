@@ -14,6 +14,7 @@
 @property (nonatomic) BOOL notLegalFloatingPointNumber;
 @property (nonatomic) BOOL secondDisplayCheck;
 @property (nonatomic) BOOL displayOneContainsEqualSign;
+@property (nonatomic) BOOL isPositive;
 @property (nonatomic,strong) CalculatorBrain *brain;
 @end
 
@@ -152,6 +153,36 @@
     self.display.text = [NSString stringWithFormat:@"= %g", result];
     self.displayOneContainsEqualSign = YES;
 }
+
+- (IBAction)positiveNegativeToggle:(id)sender
+{
+    self.isPositive = YES;
+    int negativeOne = -1;
+    int displayValue = [self.display.text doubleValue];
+    displayValue = displayValue * negativeOne;
+    
+    self.display.text = [NSString stringWithFormat:@"%d", displayValue];
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @end
