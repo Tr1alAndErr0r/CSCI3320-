@@ -13,6 +13,7 @@
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
 @property (nonatomic) BOOL notLegalFloatingPointNumber;
 @property (nonatomic) BOOL secondDisplayCheck;
+@property (nonatomic) BOOL displayOneContainsEqualSign;
 @property (nonatomic,strong) CalculatorBrain *brain;
 @end
 
@@ -44,23 +45,27 @@
 - (IBAction)backSpacePressed:(UIButton *)sender
 {
     NSString *stringDisplayOne = self.display.text;
+    NSString *stringDisplayTwo = self.displayTwo.text;
 
-    if([stringDisplayOne length] == 1)
+    if (!self.displayOneContainsEqualSign)
     {
-        self.display.text = @"0";
-        self.userIsInTheMiddleOfEnteringANumber = NO;
+        if ([stringDisplayOne length] > 0)
+        {
+            self.display.text = [stringDisplayOne substringToIndex:[stringDisplayOne length] - 1];
+            self.displayTwo.text = [stringDisplayTwo substringToIndex:[stringDisplayTwo length] - 1];
+            if ([self.display.text rangeOfString:@"."].location == NSNotFound)
+            {
+                self.notLegalFloatingPointNumber = NO;
+            }
+            if ([stringDisplayOne length] == 1 && [stringDisplayTwo length] == 1)
+            {
+                self.display.text = @"0";
+                self.displayTwo.text = @"0";
+                self.secondDisplayCheck = NO;
+                self.userIsInTheMiddleOfEnteringANumber = NO;
+            }
+        }
     }
-    
-    else if([stringDisplayOne length] > 0)
-    {
-        self.display.text = [stringDisplayOne substringToIndex:[stringDisplayOne length] - 1];
-    }
-    
-    else
-    {
-
-    }
-    
 }
 
 - (IBAction)digitPressed:(UIButton *)sender
@@ -91,6 +96,7 @@
             self.secondDisplayCheck = YES;
         }
     }
+    self.displayOneContainsEqualSign = NO;
 }
 
 - (IBAction)dotPressed:(UIButton *)sender
@@ -106,6 +112,14 @@
             self.notLegalFloatingPointNumber = YES;
         }
         
+        else if ([self.displayTwo.text length] > 0)
+        {
+            self.display.text = dot;
+            self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
+            self.displayTwo.text = [self.displayTwo.text stringByAppendingString:dot];
+            self.userIsInTheMiddleOfEnteringANumber = YES;
+            self.notLegalFloatingPointNumber = YES;
+        }
         else
         {
             self.display.text = dot;
@@ -114,6 +128,7 @@
             self.notLegalFloatingPointNumber = YES;
         }
     }
+    self.displayOneContainsEqualSign = NO;
 }
 
 - (IBAction)enterPressed
@@ -131,10 +146,11 @@
         [self enterPressed];
     }
     NSString *operation = [sender currentTitle];
+    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation];
     double result = [self.brain performOperations:operation];
-    self.display.text = [NSString stringWithFormat:@"%g", result];
-
+    self.display.text = [NSString stringWithFormat:@"= %g", result];
+    self.displayOneContainsEqualSign = YES;
 }
 
 
