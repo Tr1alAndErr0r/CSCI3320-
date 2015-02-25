@@ -14,7 +14,6 @@
 @property (nonatomic) BOOL notLegalFloatingPointNumber;
 @property (nonatomic) BOOL secondDisplayCheck;
 @property (nonatomic) BOOL displayOneContainsEqualSign;
-@property (nonatomic) BOOL isPositive;
 @property (nonatomic,strong) CalculatorBrain *brain;
 @end
 
@@ -150,20 +149,27 @@
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation];
     double result = [self.brain performOperations:operation];
-    self.display.text = [NSString stringWithFormat:@"= %g", result];
+    self.display.text = [NSString stringWithFormat:@"%g =", result];
     self.displayOneContainsEqualSign = YES;
 }
 
 - (IBAction)positiveNegativeToggle:(id)sender
 {
-    self.isPositive = YES;
-    int negativeOne = -1;
-    int displayValue = [self.display.text doubleValue];
+    double negativeOne = -1;
+    double displayValue = [self.display.text doubleValue];
+    double theRange = [self.display.text length];
+    double theLength = [self.displayTwo.text length];
+    
     displayValue = displayValue * negativeOne;
-    
-    self.display.text = [NSString stringWithFormat:@"%d", displayValue];
-    
+    theLength = theLength - theRange;
+    self.display.text = [NSString stringWithFormat:@"%g", displayValue];
+    NSString* displayTwoTemp = self.displayTwo.text;
+    NSMutableString *mutableString = [displayTwoTemp mutableCopy];
+    [mutableString replaceCharactersInRange: NSMakeRange(theLength, theRange) withString: self.display.text];
+    [NSString stringWithString: mutableString];
+    self.displayTwo.text = mutableString;
 }
+
 
 
 
