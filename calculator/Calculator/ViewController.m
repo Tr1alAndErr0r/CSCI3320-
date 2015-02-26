@@ -33,12 +33,12 @@
 
 - (IBAction)clearPressed:(UIButton *)sender
 {
-    self.display.text = @"0";
+    self.display.text = @"0"; // setting ui display to 0
     self.displayTwo.text = @"0";
-    self.userIsInTheMiddleOfEnteringANumber = NO;
+    self.userIsInTheMiddleOfEnteringANumber = NO; // reseting bool values to 0
     self.notLegalFloatingPointNumber = NO;
     self.secondDisplayCheck = NO;
-    [self.brain clearArray];
+    [self.brain clearArray]; // deleting all contents of array
     
 }
 
@@ -57,7 +57,7 @@
             {
                 self.notLegalFloatingPointNumber = NO;
             }
-            if ([stringDisplayOne length] == 1 && [stringDisplayTwo length] == 1)
+            if ([stringDisplayOne length] == 1 && [stringDisplayTwo length] == 1) // reset display to original starting values
             {
                 self.display.text = @"0";
                 self.displayTwo.text = @"0";
@@ -103,24 +103,24 @@
 {
     NSString *dot = [sender currentTitle];
    
-    if (self.notLegalFloatingPointNumber == NO)
+    if (self.notLegalFloatingPointNumber == NO) // bool check to see if dot/floating point has already been pressed
     {
         if (self.userIsInTheMiddleOfEnteringANumber)
         {
-            self.display.text = [self.display.text stringByAppendingString:dot];
+            self.display.text = [self.display.text stringByAppendingString:dot]; // adding floating point to display
             self.displayTwo.text = [self.displayTwo.text stringByAppendingString:dot];
-            self.notLegalFloatingPointNumber = YES;
+            self.notLegalFloatingPointNumber = YES; // sets off bool to mark that floating point has already been used in current integer
         }
         
         else if ([self.displayTwo.text length] > 0)
         {
             self.display.text = dot;
-            self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
+            self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "]; // if 2nd display already has values then create a space between them
             self.displayTwo.text = [self.displayTwo.text stringByAppendingString:dot];
             self.userIsInTheMiddleOfEnteringANumber = YES;
             self.notLegalFloatingPointNumber = YES;
         }
-        else
+        else // handles first case of floating point pressed, just sets display with floating point
         {
             self.display.text = dot;
             self.displayTwo.text = dot;
@@ -133,8 +133,8 @@
 
 - (IBAction)enterPressed
 {
-    [self.brain pushOperand:[self.display.text doubleValue]];
-    self.userIsInTheMiddleOfEnteringANumber = NO;
+    [self.brain pushOperand:[self.display.text doubleValue]]; // pushes value on display to brain
+    self.userIsInTheMiddleOfEnteringANumber = NO; // resets bools back to 0
     self.notLegalFloatingPointNumber = NO;
 }
 
@@ -143,19 +143,36 @@
 {
     if (self.userIsInTheMiddleOfEnteringANumber)
     {
-        [self enterPressed];
+        [self enterPressed]; // calls enter to push current value in display onto stack
     }
     NSString *operation = [sender currentTitle];
-    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
-    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation];
-    double result = [self.brain performOperations:operation];
-    self.display.text = [NSString stringWithFormat:@"%g =", result];
+    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "]; // puts a delimiter to seperate values and operator on display
+    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation]; // adds the operator to the display
+    self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" ="];
+    double result = [self.brain performOperation:operation]; // store result of operation
+    self.display.text = [NSString stringWithFormat:@"%g", result];
+    if (![operation isEqualToString:@"pi"]) // special case handling of pi
+    {
     self.displayOneContainsEqualSign = YES;
+    }
+    if ([operation isEqualToString:@"pi"] && !secondDisplayCheck) // special case handling of pi
+    {
+        if (self.userIsInTheMiddleOfEnteringANumber)
+        {
+            self.displayTwo.text = [self.displayTwo.text stringByAppendingString:self.display.text];
+        }
+        else
+        {
+            self.displayTwo.text = self.display.text;
+            self.secondDisplayCheck = YES;
+        }
+        
+    }
 }
 
 - (IBAction)positiveNegativeToggle:(id)sender
 {
-    if (!self.displayOneContainsEqualSign)
+    if (!self.displayOneContainsEqualSign) // to prevent from toggling the sign of a result of calculations
     {
     double negativeOne = -1;
     double convertedDisplayOneValue = [self.display.text doubleValue];
@@ -164,12 +181,12 @@
     NSString* displayTwoTemp = self.displayTwo.text;
     NSMutableString *mutableString = [displayTwoTemp mutableCopy];
         
-    convertedDisplayOneValue = convertedDisplayOneValue * negativeOne;
+    convertedDisplayOneValue = convertedDisplayOneValue * negativeOne; // reverses the magnitude of user integer
     startingIndex = startingIndex - numberOfCharactersToRemove;
     self.display.text = [NSString stringWithFormat:@"%g", convertedDisplayOneValue];
     [mutableString replaceCharactersInRange: NSMakeRange(startingIndex, numberOfCharactersToRemove) withString: self.display.text];
-    [NSString stringWithString: mutableString];
-    self.displayTwo.text = mutableString;
+    [NSString stringWithString: mutableString]; // covert back to NSString
+    self.displayTwo.text = mutableString; // update result to secondary display
     }
 }
 
