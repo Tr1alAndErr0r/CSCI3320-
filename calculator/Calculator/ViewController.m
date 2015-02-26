@@ -155,19 +155,22 @@
 
 - (IBAction)positiveNegativeToggle:(id)sender
 {
+    if (!self.displayOneContainsEqualSign)
+    {
     double negativeOne = -1;
-    double displayValue = [self.display.text doubleValue];
-    double theRange = [self.display.text length];
-    double theLength = [self.displayTwo.text length];
-    
-    displayValue = displayValue * negativeOne;
-    theLength = theLength - theRange;
-    self.display.text = [NSString stringWithFormat:@"%g", displayValue];
+    double convertedDisplayOneValue = [self.display.text doubleValue];
+    double numberOfCharactersToRemove = [self.display.text length];
+    double startingIndex = [self.displayTwo.text length];
     NSString* displayTwoTemp = self.displayTwo.text;
     NSMutableString *mutableString = [displayTwoTemp mutableCopy];
-    [mutableString replaceCharactersInRange: NSMakeRange(theLength, theRange) withString: self.display.text];
+        
+    convertedDisplayOneValue = convertedDisplayOneValue * negativeOne;
+    startingIndex = startingIndex - numberOfCharactersToRemove;
+    self.display.text = [NSString stringWithFormat:@"%g", convertedDisplayOneValue];
+    [mutableString replaceCharactersInRange: NSMakeRange(startingIndex, numberOfCharactersToRemove) withString: self.display.text];
     [NSString stringWithString: mutableString];
     self.displayTwo.text = mutableString;
+    }
 }
 
 
