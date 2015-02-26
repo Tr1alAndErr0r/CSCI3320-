@@ -14,7 +14,6 @@
 @property (nonatomic) BOOL notLegalFloatingPointNumber;
 @property (nonatomic) BOOL secondDisplayCheck;
 @property (nonatomic) BOOL displayOneContainsEqualSign;
-@property (nonatomic) BOOL isPositive;
 @property (nonatomic,strong) CalculatorBrain *brain;
 @end
 
@@ -149,21 +148,31 @@
     NSString *operation = [sender currentTitle];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation];
-    double result = [self.brain performOperations:operation];
-    self.display.text = [NSString stringWithFormat:@"= %g", result];
+    double result = [self.brain performOperation:operation];
+    self.display.text = [NSString stringWithFormat:@"%g =", result];
     self.displayOneContainsEqualSign = YES;
 }
 
 - (IBAction)positiveNegativeToggle:(id)sender
 {
-    self.isPositive = YES;
-    int negativeOne = -1;
-    int displayValue = [self.display.text doubleValue];
-    displayValue = displayValue * negativeOne;
-    
-    self.display.text = [NSString stringWithFormat:@"%d", displayValue];
-    
+    if (!self.displayOneContainsEqualSign)
+    {
+    double negativeOne = -1;
+    double convertedDisplayOneValue = [self.display.text doubleValue];
+    double numberOfCharactersToRemove = [self.display.text length];
+    double startingIndex = [self.displayTwo.text length];
+    NSString* displayTwoTemp = self.displayTwo.text;
+    NSMutableString *mutableString = [displayTwoTemp mutableCopy];
+        
+    convertedDisplayOneValue = convertedDisplayOneValue * negativeOne;
+    startingIndex = startingIndex - numberOfCharactersToRemove;
+    self.display.text = [NSString stringWithFormat:@"%g", convertedDisplayOneValue];
+    [mutableString replaceCharactersInRange: NSMakeRange(startingIndex, numberOfCharactersToRemove) withString: self.display.text];
+    [NSString stringWithString: mutableString];
+    self.displayTwo.text = mutableString;
+    }
 }
+
 
 
 
