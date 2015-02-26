@@ -21,7 +21,7 @@
 
 - (NSMutableArray *)programStack
 {
-    if (_programStack == nil) _programStack = [[NSMutableArray alloc] init];
+    if (_programStack == nil) _programStack = [[NSMutableArray alloc] init]; // allocating a new array
     return _programStack;
 }
 
@@ -42,13 +42,13 @@
 
 - (double)performOperation:(NSString *)operation
 {
-    [self.programStack addObject:operation];
+    [self.programStack addObject:operation]; // adding operation to array
     return [[self class] runProgram:self.program];
 }
 
 -(void)clearArray
 {
-    [self.programStack removeAllObjects];
+    [self.programStack removeAllObjects]; // deletes all objects from array
 }
 
 + (double)popOperandOffProgramStack:(NSMutableArray *)stack
@@ -64,7 +64,7 @@
     
     else if ([topOfStack isKindOfClass:[NSString class]])
     {
-        NSString *operation = topOfStack;
+        NSString *operation = topOfStack; // comparing various strings to their respective operations and performing the operations by removing the numbers from the array
         if ([operation isEqualToString:@"+"])
         {
             result = [self popOperandOffProgramStack:stack] + [self popOperandOffProgramStack:stack];
