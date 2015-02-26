@@ -148,7 +148,11 @@
     NSString *operation = [sender currentTitle];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation];
+<<<<<<< HEAD
     double result = [self.brain performOperation:operation];
+=======
+    double result = [self.brain performOperations:operation];
+>>>>>>> FETCH_HEAD
     self.display.text = [NSString stringWithFormat:@"%g =", result];
     self.displayOneContainsEqualSign = YES;
 }
