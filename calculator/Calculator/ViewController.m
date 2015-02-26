@@ -148,17 +148,11 @@
     NSString *operation = [sender currentTitle];
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" "]; // puts a delimiter to seperate values and operator on display
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:operation]; // adds the operator to the display
-<<<<<<< HEAD
     self.displayTwo.text = [self.displayTwo.text stringByAppendingString:@" ="];
     double result = [self.brain performOperation:operation]; // store result of operation
     self.display.text = [NSString stringWithFormat:@"%g", result];
     if (![operation isEqualToString:@"pi"]) // special case handling of pi
     {
-=======
-
-    double result = [self.brain performOperation:operation]; // store result of operation
-    self.display.text = [NSString stringWithFormat:@"%g =", result];
->>>>>>> origin/master
     self.displayOneContainsEqualSign = YES;
     }
     if ([operation isEqualToString:@"pi"] && !secondDisplayCheck) // special case handling of pi
